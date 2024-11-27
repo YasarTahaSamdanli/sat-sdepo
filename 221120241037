@@ -1,1 +1,122 @@
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp17
+{
+    internal class Program
+    {
+        class Urun
+        {
+            public string Ad { get; set; }
+            public int Stok { get; set; }
+            public double Fiyat { get; set; }
+        }
+        static void Main(string[] args)
+        {
+            List<Urun> urunler = new List<Urun>();
+            double kasa = 0; 
+            double toplamSatis = 0;
+
+            while (true)
+            {
+                Console.WriteLine("\n--- Bakkal Market Uygulaması ---");
+                Console.WriteLine("1. Ürün Ekle");
+                Console.WriteLine("2. Ürün Sat");
+                Console.WriteLine("3. Stok Durumunu Gör");
+                Console.WriteLine("4. Kasayı Görüntüle");
+                Console.WriteLine("5. Çıkış");
+                Console.Write("Seçiminizi yapın: ");
+
+                string secimStr = Console.ReadLine();
+                int secim = Convert.ToInt32(secimStr);
+
+                if (secim == 1)
+                {
+                    Console.Write("\nÜrün adı: ");
+                    string urunAdi = Console.ReadLine();
+
+                    Console.Write("Stok miktarı: ");
+                    string stokStr = Console.ReadLine();
+                    int stok = Convert.ToInt32(stokStr);
+
+                    Console.Write("Ürün fiyatı: ");
+                    string fiyatStr = Console.ReadLine();
+                    double fiyat = Convert.ToDouble(fiyatStr);
+
+                    urunler.Add(new Urun { Ad = urunAdi, Stok = stok, Fiyat = fiyat });
+                    Console.WriteLine($"{urunAdi} eklendi.");
+                }
+                else if (secim == 2)
+                {
+                    Console.Write("\nÜrün adı: ");
+                    string urunAdi = Console.ReadLine();
+
+                    Urun urun = urunler.Find(u => u.Ad.ToLower() == urunAdi.ToLower());
+                    if (urun != null)
+                    {
+                        Console.Write("Satılacak miktar: ");
+                        string miktarStr = Console.ReadLine();
+                        int miktar = Convert.ToInt32(miktarStr);
+
+                        if (urun.Stok >= miktar)
+                        {
+                            double satisTutari = miktar * urun.Fiyat;
+
+                            Console.Write("Müşteri parası: ");
+                            string paraStr = Console.ReadLine();
+                            double musteriParasi = Convert.ToDouble(paraStr);
+
+                            if (musteriParasi >= satisTutari)
+                            {
+                                urun.Stok -= miktar;
+                                kasa += satisTutari;
+                                toplamSatis += satisTutari;
+                                Console.WriteLine($"{miktar} adet {urun.Ad} satıldı. Kazanç: {satisTutari:C}");
+                                double paraUstu = musteriParasi - satisTutari;
+                                Console.WriteLine($"Müşteri para üstü: {paraUstu:C}");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Müşterinin parası yeterli değil, satış yapılamaz.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Yeterli stok yok.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bu isimde bir ürün bulunamadı.");
+                    }
+                }
+                else if (secim == 3)
+                {
+                    Console.WriteLine("\n--- Stok Durumu ---");
+                    foreach (var urun in urunler)
+                    {
+                        Console.WriteLine($"Ürün: {urun.Ad}, Stok: {urun.Stok}, Fiyat: {urun.Fiyat:C}");
+                    }
+                }
+                else if (secim == 4)
+                {
+                    Console.WriteLine($"\nKasadaki Para: {kasa:C}");
+                    Console.WriteLine($"Toplam Satış Miktarı: {toplamSatis:C}");
+                }
+                else if (secim == 5)
+                {
+                    Console.WriteLine("Programdan çıkılıyor...");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Geçersiz seçim, lütfen tekrar deneyin.");
+                }
+            }
+        }
+    }
+}
